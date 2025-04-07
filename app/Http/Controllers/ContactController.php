@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class ContactController extends Controller
 {
@@ -24,7 +25,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        return view('contact');
+        return view("contact");
     }
 
     /**
@@ -36,8 +37,16 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        Contact::create($request->all());
-        return "Contact {$request->all()['name']} stored!";
+        $data = $request->validate([
+            'name' => 'required',
+            'phone_number' => 'required|digits:9',
+            'email' => 'required|email',
+            'age' => 'required|numeric|min:1|max:255',
+        ]);
+        
+        Contact::create($data);
+
+        return "Contact \"{$request->all()['name']}\" stored!";
     }
 
     /**
