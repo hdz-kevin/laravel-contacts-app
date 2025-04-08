@@ -26,7 +26,7 @@
     <div id="app">
       <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
         <div class="container">
-          <img class="me-1"  src="{{ asset("img/logo.png") }}" alt="logo img">
+          <img class="me-1" src="{{ asset('img/logo.png') }}" alt="logo img">
           <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('app.name', 'Laravel') }}
           </a>
@@ -58,6 +58,10 @@
                   </li>
                 @endif
               @else
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ route('contacts.create') }}">Create Contact</a>
+                </li>
+
                 <li class="nav-item dropdown">
                   <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
