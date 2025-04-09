@@ -16,14 +16,12 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
+Route::get('/', fn () => auth()->check() ? redirect()->route('home') : view('welcome'));
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
 Route::get('/contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 Route::post('/contacts', [ContactController::class, 'store'])->name('contacts.store');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');

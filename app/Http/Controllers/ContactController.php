@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
 use Illuminate\Http\Request;
+use App\Models\Contact;
 
 class ContactController extends Controller
 {
@@ -14,7 +14,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        //
+        return view('contacts.index', ['contacts' => Contact::all()]);
     }
 
     /**
@@ -99,7 +99,7 @@ class ContactController extends Controller
     public function destroy(Contact $contact)
     {
         $contact->delete();
-        
+
         return redirect()->route('home');
     }
 }
