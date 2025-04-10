@@ -24,6 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['contacts' => Contact::all()]);
+        // $contacts = Contact::where('user_id', auth()->id())->get();
+        // $contacts = auth()->user()->contacts()->get();
+
+        return view('home', [ 'contacts' => auth()->user()->contacts]);
     }
 }
