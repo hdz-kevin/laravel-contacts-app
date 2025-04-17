@@ -41,9 +41,12 @@ class ContactController extends Controller
     public function store(StoreContactRequest $request)
     {
         // Contact::create([...$data, 'user_id' => auth()->id()]);
-        auth()->user()->contacts()->create($request->validated()); 
+        $contact = auth()->user()->contacts()->create($request->validated()); 
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('alert', [
+            'message' => "Contact $contact->name successfully saved",
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -99,7 +102,10 @@ class ContactController extends Controller
 
         $contact->update($request->validated());
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('alert', [
+            'message' => "Contact $contact->name successfully updated",
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -114,6 +120,9 @@ class ContactController extends Controller
 
         $contact->delete();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('alert', [
+            'message' => "Contact $contact->name successfully deleted",
+            'type' => 'success',
+        ]);
     }
 }
