@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between bg-dark mb-3 rounded px-4 py-2">
       <div>
         <a href="{{ route('contacts.show', $contact->id) }}">
-          <img src="{{ asset('img/logo.png') }}" style="width: 20px;">
+          <img class="profile-picture profile-picture--small" src="{{ Storage::url($contact->profile_picture) }}">
         </a>
       </div>
 

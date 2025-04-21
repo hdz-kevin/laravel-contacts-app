@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreContactRequest;
 use Illuminate\Http\Request;
-use App\Models\Contact;
 use Illuminate\Http\Response;
+use App\Models\Contact;
+use App\Http\Requests\StoreContactRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ContactController extends Controller
 {
@@ -40,8 +41,15 @@ class ContactController extends Controller
      */
     public function store(StoreContactRequest $request)
     {
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profiles', 'public');
+            $data['profile_picture'] = $path;
+        }
+
         // Contact::create([...$data, 'user_id' => auth()->id()]);
-        $contact = auth()->user()->contacts()->create($request->validated()); 
+        $contact = auth()->user()->contacts()->create($data);
 
         return redirect()->route('home')->with('alert', [
             'message' => "Contact $contact->name successfully saved",
@@ -59,9 +67,6 @@ class ContactController extends Controller
     {
         // autorizacion cutre
         // abort_if($contact->user_id !== auth()->id(), Response::HTTP_FORBIDDEN);
-
-        // autorizacion con Gates
-        // Gate::authorize('show-contact', $contact);
 
         // autorizacion con policies
         $this->authorize('view', $contact);
@@ -93,14 +98,14 @@ class ContactController extends Controller
     {
         $this->authorize('update', $contact);
 
-        // $data = $request->validate([
-        //     'name' => 'required',
-        //     'phone_number' => 'required|digits:9',
-        //     'email' => 'required|email',
-        //     'age' => 'required|numeric|min:2|max:255',
-        // ]);
+        $data = $request->validated();
 
-        $contact->update($request->validated());
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profiles', 'public');
+            $data['profile_picture'] = $path;
+        }
+
+        $contact->update($data);
 
         return redirect()->route('home')->with('alert', [
             'message' => "Contact $contact->name successfully updated",
@@ -117,6 +122,10 @@ class ContactController extends Controller
     public function destroy(Contact $contact)
     {
         $this->authorize('delete', $contact);
+
+        // if ($contact->profile_picture != 'profiles/default.png') {
+        //     Storage::disk('public')->delete($contact->profile_picture);
+        // }
 
         $contact->delete();
 
