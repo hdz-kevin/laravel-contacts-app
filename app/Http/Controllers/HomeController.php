@@ -27,6 +27,13 @@ class HomeController extends Controller
         // $contacts = Contact::where('user_id', auth()->id())->get();
         // $contacts = auth()->user()->contacts()->get();
 
-        return view('home', [ 'contacts' => auth()->user()->contacts]);
+        return view('home', [
+            'contacts' => auth()
+                            ->user()
+                            ->contacts()
+                            ->latest() // sort by created_at
+                            ->take(9)
+                            ->get(),
+        ]);
     }
 }

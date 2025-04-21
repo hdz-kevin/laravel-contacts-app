@@ -20,7 +20,9 @@ class ContactController extends Controller
         // $contacts = Contact::where('user_id', auth()->id())->get();
         // $contacts = auth()->user()->contacts()->get();
 
-        return view('contacts.index', ['contacts' => auth()->user()->contacts]);
+        return view('contacts.index', [
+            'contacts' => auth()->user()->contacts()->orderBy('name')->paginate(6),
+        ]);
     }
 
     /**
