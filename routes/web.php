@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,16 @@ use App\Http\Controllers\HomeController;
 Auth::routes();
 
 Route::get('/', fn () => auth()->check() ? redirect()->route('home') : view('welcome'));
+
+Route::get('/billing-portal', function (Request $request) {
+    return $request->user()->redirectToBillingPortal();
+});
+
+Route::get('/checkout', function (Request $request) {
+    return $request->user()
+        ->newSubscription('default', config('stripe.price_id'))
+        ->checkout();
+});
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
