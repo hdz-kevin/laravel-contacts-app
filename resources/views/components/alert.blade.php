@@ -22,7 +22,7 @@
         <use xlink:href="#{{ $type }}" />
     </svg>
     <div>
-        {{ $message }}
+        {!! $message !!}
     </div>
     </div>
 </div>

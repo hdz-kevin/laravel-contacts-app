@@ -95,7 +95,7 @@
           <x-alert :type="$alert['type']" :message="$alert['message']" />
         @endif
         @if (! auth()->user()?->subscribed() && auth()->user()?->onTrial())
-          <x-alert type="info" message="Trial ens in {{ now()->diffInDays(auth()->user()->trial_ends_at) }} days." />
+          <x-alert type="info" message="Trial ens in {{ now()->diffInDays(auth()->user()->trial_ends_at) }} days. Upgrade <a href='{{ route('checkout') }}'>Here</a> " />
         @endif
         @yield('content')
       </main>

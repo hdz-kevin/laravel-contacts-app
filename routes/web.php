@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Http\Request;
 
 /*
@@ -21,16 +22,11 @@ Auth::routes();
 
 Route::get('/', fn () => auth()->check() ? redirect()->route('home') : view('welcome'));
 
-Route::get('/billing-portal', function (Request $request) {
-    return $request->user()->redirectToBillingPortal();
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+Route::get('/billing-portal', [StripeController::class, 'billingPortal'])->name('billing-portal');
+Route::get('/free-trial-end', [StripeController::class, 'freeTrialEnd'])->name('free-trial-end');
+
+Route::middleware(['auth', 'subscription'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::resource('contacts', ContactController::class);
 });
-
-Route::get('/checkout', function (Request $request) {
-    return $request->user()
-        ->newSubscription('default', config('stripe.price_id'))
-        ->checkout();
-});
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-Route::resource('contacts', ContactController::class);
