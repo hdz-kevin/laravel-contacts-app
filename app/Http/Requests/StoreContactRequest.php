@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreContactRequest extends FormRequest
 {
@@ -26,9 +27,22 @@ class StoreContactRequest extends FormRequest
         return [
             'name' => 'required',
             'phone_number' => 'required|digits:9',
-            'email' => 'required|email',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('contacts', 'email')
+                        ->where('user_id', auth()->id())
+                        ->ignore($this->route('contact')),
+            ],
             'age' => 'required|numeric|gt:0|max:255',
             'profile_picture' => 'image|nullable',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => 'You already have a contact with this email.',
         ];
     }
 }
