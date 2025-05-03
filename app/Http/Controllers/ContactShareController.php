@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactShared;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class ContactShareController extends Controller
@@ -51,7 +53,8 @@ class ContactShareController extends Controller
             ->where('user_id', auth()->id())
             ->first(['id', 'name']);
 
-        $shareExists = $contact->sharedWith()->wherePivot('user_id', $user->id)->first() != null;
+        $shareExists = $contact->sharedWith()
+            ->wherePivot('user_id', $user->id)->first() != null;
 
         if ($shareExists) {
             return
@@ -62,8 +65,9 @@ class ContactShareController extends Controller
                 ]);
         }
 
-        $contact->sharedWith()->attach($user->id);//->wherePivot('user_id', auth()->id());
-        // $contact->sharedWith()->attach($user->id, ['user_id' => auth()->id()]);
+        $contact->sharedWith()->attach($user->id);
+
+        Mail::to($user)->send(new ContactShared(auth()->user()->email, $contact->name));
 
         return redirect()
             ->route('home')
